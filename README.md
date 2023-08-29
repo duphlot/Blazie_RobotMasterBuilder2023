@@ -30,7 +30,4 @@
   <img src="https://user-images.githubusercontent.com/100553554/227240226-e04a7521-53e8-4478-bc41-4d804a6495ed.jpg" width="700">
 </p>
 
-## Work
- <p align="center">
-  <video src="https://user-images.githubusercontent.com/100553554/227243953-c9e04442-389b-4df0-8bad-37e09fe61741.mp4" controls autoplay  width="1000"></video>
-  </p>
+
