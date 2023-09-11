@@ -24,10 +24,3 @@
 - 3D printed shield and gears
 - Power supply by 3.7Vx2 batteries
 
-
-## Inside
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/100553554/227240226-e04a7521-53e8-4478-bc41-4d804a6495ed.jpg" width="700">
-</p>
-
-
