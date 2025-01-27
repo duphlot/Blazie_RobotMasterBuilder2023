@@ -3,7 +3,8 @@
 #include <Servo.h>
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
-// ptd
+
+// Note definitions
 #define NOTE_B0 31
 #define NOTE_C1 33
 #define NOTE_CS1 35
@@ -93,33 +94,32 @@
 #define NOTE_CS8 4435
 #define NOTE_D8 4699
 #define NOTE_DS8 4978
-// ptd
+
 const int maxn = 100;
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 int count, now = 2;
 int local[] = {1, 7, 12}, temp = 0;
 int button[] = {10, 12, 9, 11, 8, 13};
 int loa = 7, gas = A0, checkgas = 0;
-struct pair
-{
+
+struct Pair {
   int fi;
   int se;
 };
+
 SoftwareSerial sim(3, 2);
-pair sav[maxn];
+Pair sav[maxn];
 Servo servo;
 String _buffer;
 int _timeout;
-String number = "+84938736140";// +84xxxxxxxx
-// ptd 
-void setup()
-{
+String number = "+84938736140";
+
+void setup() {
   servo.attach(6);
   servo.write(180);
   _buffer.reserve(50);
   sim.begin(9600);
-  for (int i = 0; i < 7; i++)
-  {
+  for (int i = 0; i < 7; i++) {
     pinMode(button[i], INPUT_PULLUP);
   }
   pinMode(gas, INPUT);
@@ -130,29 +130,29 @@ void setup()
   delay(1000);
 }
 
-String _readSerial()
-{
+String _readSerial() {
   _timeout = 0;
-  while (!sim.available() && _timeout < 12000)
-  {
+  while (!sim.available() && _timeout < 12000) {
     delay(13);
     _timeout++;
   }
-  if (sim.available())
+  if (sim.available()) {
     return sim.readString();
+  }
+  return "";
 }
 
-void updateSerial(){
+void updateSerial() {
   delay(500);
-  while (Serial.available()){
+  while (Serial.available()) {
     sim.write(Serial.read());
-  } while (sim.available()){
+  }
+  while (sim.available()) {
     Serial.write(sim.read());
   }
 }
 
-void SendMessage(String SMS)
-{
+void SendMessage(String SMS) {
   sim.println("AT+CMGF=1");
   updateSerial();
   sim.println("AT+CMGS=\"+84919818297\"");
@@ -162,8 +162,7 @@ void SendMessage(String SMS)
   sim.write(26);
 }
 
-void RecieveMessage()
-{
+void RecieveMessage() {
   sim.println("AT");
   updateSerial();
   sim.println("AT+CMGF=1");
@@ -172,8 +171,7 @@ void RecieveMessage()
   updateSerial();
 }
 
-void callNumber()
-{
+void callNumber() {
   sim.print(F("ATD"));
   sim.print(number);
   sim.print(F(";rn"));
@@ -181,143 +179,46 @@ void callNumber()
   Serial.println(_buffer);
 }
 
-void sos()
-{
-  tone(loa, 261.63, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 261.63, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 440, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 440, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 392, 200);
-  delay(750);
-  noTone(loa);
-
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 293, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 293, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 261, 200);
-  delay(750);
-  noTone(loa);
-
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 293, 200);
-  delay(750);
-  noTone(loa);
-
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 392, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 349, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-  tone(loa, 329, 200);
-  delay(500);
-  noTone(loa);
-
-  tone(loa, 293, 200);
-  delay(750);
-  noTone(loa);
-
+void sos() {
+  int notes[] = {261, 392, 440, 392, 349, 329, 293, 261, 392, 349, 329, 293, 392, 349, 329, 293};
+  for (int i = 0; i < 16; i++) {
+    tone(loa, notes[i], 200);
+    delay(500);
+    noTone(loa);
+    if (i % 4 == 3) {
+      delay(750);
+    }
+  }
   delay(500);
 }
 
-void showtime(int second)
-{
+void showtime(int second) {
   lcd.setCursor(0, 1);
   lcd.print(second / 3600);
   lcd.print("h");
   lcd.print(second / 60 % 60);
   lcd.print("m");
-  
   lcd.print(second % 60);
 }
 
-void isGasleaked(){
-    checkgas = analogRead(gas);
-    //Serial.write(checkgas);
-    if (checkgas > 500)
-    {
-      Serial.write(checkgas);
-      servo.write(180);
-      lcd.clear();
-      lcd.print("gas leakage");
-      lcd.setCursor(0, 1);
-      lcd.print("detected");
-      SendMessage("gas leakage detected");
-      while (1)
-        sos();
+void isGasleaked() {
+  checkgas = analogRead(gas);
+  if (checkgas > 500) {
+    Serial.write(checkgas);
+    servo.write(180);
+    lcd.clear();
+    lcd.print("gas leakage");
+    lcd.setCursor(0, 1);
+    lcd.print("detected");
+    SendMessage("gas leakage detected");
+    while (1) {
+      sos();
     }
+  }
 }
 
-void count_time(int time)
-{
-  for (int s = 1; s <= time; s++)
-  {
+void count_time(int time) {
+  for (int s = 1; s <= time; s++) {
     isGasleaked();
     lcd.setCursor(0, 1);
     lcd.print("                  ");
@@ -326,32 +227,27 @@ void count_time(int time)
   }
 }
 
-int choose_time()
-{
+int choose_time() {
   count = 0;
-  while (1)
-  {
+  while (1) {
     isGasleaked();
-    if (digitalRead(button[1]) == 0)
-    {
+    if (digitalRead(button[1]) == 0) {
       count++;
       showtime(count);
     }
-    if (digitalRead(button[0]) == 0)
-    {
+    if (digitalRead(button[0]) == 0) {
       count = max(count - 1, 0);
       showtime(count);
-    } // if (digitalRead(button[5])==0) return -1;
+    }
     delay(50);
-    if (digitalRead(button[4]) == 0)
+    if (digitalRead(button[4]) == 0) {
       return count;
+    }
   }
 }
 
-void choose(int lo, int hi)
-{
-  if (digitalRead(button[3]) == 0)
-  {
+void choose(int lo, int hi) {
+  if (digitalRead(button[3]) == 0) {
     now = max(now - 1, lo);
     tone(loa, NOTE_A5, 200);
     lcd.setCursor(0, 1);
@@ -360,8 +256,7 @@ void choose(int lo, int hi)
     lcd.print("**");
     delay(700);
   }
-  if (digitalRead(button[2]) == 0)
-  {
+  if (digitalRead(button[2]) == 0) {
     now = min(now + 1, hi);
     tone(loa, NOTE_A5, 200);
     lcd.setCursor(0, 1);
@@ -372,20 +267,7 @@ void choose(int lo, int hi)
   }
 }
 
-int cton(char c)
-{
-  return c - '0';
-}
-
-bool isnum(char c)
-{
-  return c >= '0' && c <= '9';
-}
-
-
-
-void choose_mode()
-{
+void choose_mode() {
   lcd.clear();
   lcd.print("Choose mode!");
   lcd.clear();
@@ -393,47 +275,51 @@ void choose_mode()
   lcd.print("high medium low");
   lcd.setCursor(12, 1);
   lcd.print("**");
-  now = 2; int time = millis();
-  String str1, tam;
-  while (1)
-  {
-    choose(0, 2);    
+  now = 2;
+  while (1) {
+    choose(0, 2);
     isGasleaked();
-    if (digitalRead(button[4]) == 0)
-    {
-      lcd.clear(), lcd.setCursor(0, 0);
+    if (digitalRead(button[4]) == 0) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
       lcd.print("timer     back->");
       delay(3000);
       sav[temp++] = {now, choose_time()};
-      if (sav[temp - 1].se != -1)
-      {
-        lcd.clear(), lcd.setCursor(0, 0);
+      if (sav[temp - 1].se != -1) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
         lcd.print("more mode ?");
         delay(3000);
-        lcd.clear(), lcd.setCursor(0, 0);
+        lcd.clear();
+        lcd.setCursor(0, 0);
         lcd.print("YES    NO");
         now = 0;
         lcd.setCursor(local[now], 1);
         lcd.print("**");
-        while (true)
-        {
+        while (true) {
           choose(0, 1);
-          if (digitalRead(button[4]) == 0 && now <= 0)
-            delay(3000), choose_mode(), exit(0);
-          else if (digitalRead(button[4]) == 0)
-          {
+          if (digitalRead(button[4]) == 0 && now <= 0) {
+            delay(3000);
+            choose_mode();
+            exit(0);
+          } else if (digitalRead(button[4]) == 0) {
             lcd.clear();
-            for (int i = 0; i < temp; i++)
-            {
+            for (int i = 0; i < temp; i++) {
               lcd.setCursor(0, 0);
               lcd.print("                  ");
               lcd.setCursor(0, 0);
-              if (sav[i].fi == 0)
-                servo.write(90), lcd.print("high");
-              else if (sav[i].fi == 1)
-                servo.write(90),servo.write(60), lcd.print("medium");
-              else
-                servo.write(90),servo.write(30), lcd.print("low");
+              if (sav[i].fi == 0) {
+                servo.write(90);
+                lcd.print("high");
+              } else if (sav[i].fi == 1) {
+                servo.write(90);
+                servo.write(60);
+                lcd.print("medium");
+              } else {
+                servo.write(90);
+                servo.write(30);
+                lcd.print("low");
+              }
               count_time(sav[i].se);
             }
             delay(1000);
@@ -441,16 +327,10 @@ void choose_mode()
             servo.write(180);
             lcd.setCursor(0, 0);
             lcd.print(" Cook Finish!!");
-            // doica();
-            while (1)
-              ;
+            while (1);
           }
         }
-        while (1)
-          ;
-      }
-      else
-      {
+      } else {
         lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print("high medium low");
@@ -462,9 +342,7 @@ void choose_mode()
   }
 }
 
-void loop()
-{
+void loop() {
   choose_mode();
-  // doica();
   delay(100000);
 }
