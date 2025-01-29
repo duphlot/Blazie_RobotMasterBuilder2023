@@ -17,6 +17,7 @@
 
 ## Components
 - 1 Arduino Nano
+- ESP32
 - 1 Servo MG996R
 - 1 I2C LCD monitor
 - 1 MQ06 Gas sensor
